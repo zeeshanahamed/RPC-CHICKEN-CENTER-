@@ -1,0 +1,41 @@
+
+name: Build RPC Chicken Center APK
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'RPC_Chicken_Center_Android_Project.zip'
+      - '.github/workflows/main.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Extract Android project
+        run: |
+          unzip RPC_Chicken_Center_Android_Project.zip
+          cd RPC_Chicken_Center_Android_Project
+          gradle assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: RPC-Chicken-Center-APK
+          path: RPC_Chicken_Center_Android_Project/app/build/outputs/apk/debug/app-debug.apk
+          
